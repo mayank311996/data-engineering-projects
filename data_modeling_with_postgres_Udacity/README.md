@@ -24,6 +24,21 @@
 
 ## Directory Tree 
 
+## Directory Tree 
+```
+|+-- src 
+│   |+-- main.py
+|   |+-- etl.py
+|   |+-- create_tables.py
+|   |+-- sql_queries.py
+|+-- notebooks
+│   |+-- etl.ipynb
+|   |+-- test.ipynb
+|+-- requirements.txt
+|+-- LICENSE
+|+-- README.md
+```
+
 ## To Do
 
 ## Bug / Feature Request 
