@@ -29,18 +29,18 @@ def process_song_file(cur, file_path):
         num_songs, artist_id, artist_latitude, artist_longitude, \
         artist_location, artist_name, song_id, title, duration, year = val
 
-        # insert song record
-        song_data = (
-            song_id, title, artist_id, year, duration
-        )
-        cur.execute(song_table_insert, song_data)
-
         # insert artist record
         artist_data = (
             artist_id, artist_name, artist_location, artist_latitude,
             artist_longitude
         )
         cur.execute(artist_table_insert, artist_data)
+
+        # insert song record
+        song_data = (
+            song_id, title, artist_id, year, duration
+        )
+        cur.execute(song_table_insert, song_data)
 
     print(f"Successfully inserted record for file: {file_path}")
 
