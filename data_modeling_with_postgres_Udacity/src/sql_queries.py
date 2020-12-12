@@ -30,7 +30,7 @@ user_table_create = ("""
         first_name VARCHAR,
         last_name VARCHAR,
         gender CHAR(1),
-        level VARCHAR NOT NULL, 
+        level VARCHAR NOT NULL
     )
 """)
 
