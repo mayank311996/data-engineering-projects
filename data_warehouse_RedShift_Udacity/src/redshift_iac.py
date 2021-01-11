@@ -202,44 +202,13 @@ def create_cluster(redshift_client, iam_role_arn, vpc_security_group_id):
     return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def get_cluster_status(redshift_client, cluster_identifier):
+    response = redshift_client.describe_clusters(
+        ClusterIdentifier=cluster_identifier
+    )
+    cluster_status = response['Clusters'][0]['ClusterStatus']
+    logger.info(f"Cluster status : {cluster_status.upper()}")
+    return True if (cluster_status.upper() in
+                    ('AVAILABLE', 'ACTIVE', 'INCOMPATIBLE_NETWORK'
+                     , 'INCOMPATIBLE_HSM', 'INCOMPATIBLE_RESTORE'
+                     , 'INSUFFICIENT_CAPACITY', 'HARDWARE_FAILURE')) else False
