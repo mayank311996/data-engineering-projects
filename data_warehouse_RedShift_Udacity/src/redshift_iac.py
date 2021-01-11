@@ -333,3 +333,10 @@ def delete_ec2_security_group(ec2_client):
     return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
+def boolean_parser(val):
+    if val.upper() not in ['FALSE', 'TRUE']:
+        logging.error(f"Invalid arguemnt : {val}. Must be TRUE or FALSE")
+        raise ValueError('Not a valid boolean string')
+    return val.upper() == 'TRUE'
+
+
