@@ -212,3 +212,99 @@ def get_cluster_status(redshift_client, cluster_identifier):
                     ('AVAILABLE', 'ACTIVE', 'INCOMPATIBLE_NETWORK'
                      , 'INCOMPATIBLE_HSM', 'INCOMPATIBLE_RESTORE'
                      , 'INSUFFICIENT_CAPACITY', 'HARDWARE_FAILURE')) else False
+
+
+def delete_cluster(redshift_client):
+    """
+    Deleting the redshift cluster
+    :param redshift_client: a redshift client instance
+    :return: True if cluster deleted successfully.
+    """
+
+    cluster_identifier = config.get('DWH', 'DWH_CLUSTER_IDENTIFIER')
+
+    if len(redshift_client.describe_clusters()['Clusters']) == 0:
+        logger.info(f"Cluster {cluster_identifier} does not exist.")
+        return True
+
+    try:
+        while(
+                not get_cluster_status(
+                    redshift_client, cluster_identifier=cluster_identifier
+                )
+        ):
+            logger.info(
+                "Can't delete cluster. Waiting for cluster to become ACTIVE"
+            )
+            time.sleep(10)
+        response = \
+            redshift_client.delete_cluster(
+                ClusterIdentifier=cluster_identifier
+                , SkipFinalClusterSnapshot=True
+            )
+        logger.debug(
+            f"Cluster deleted with response : {response}"
+        )
+        logger.info(
+            f"Cluster deleted response code "
+            f": {response['ResponseMetadata']['HTTPStatusCode']}"
+        )
+    except Exception as e:
+        logger.error(f"Exception occured while deleting cluster : {e}")
+        return False
+
+    return response['ResponseMetadata']['HTTPStatusCode']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
