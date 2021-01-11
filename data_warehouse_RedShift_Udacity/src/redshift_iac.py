@@ -309,7 +309,7 @@ def delete_ec2_security_group(ec2_client):
     :return: True if security group deleted successfully
     """
 
-    group_name = config.get('SECURITY_GROUP','NAME')
+    group_name = config.get('SECURITY_GROUP', 'NAME')
     group = get_group(ec2_client, group_name)
 
     if group is None:
@@ -340,3 +340,90 @@ def boolean_parser(val):
     return val.upper() == 'TRUE'
 
 
+if __name__ == "__main__":
+
+    # Parsing arguments
+    parser = argparse.ArgumentParser(
+        description="A Redshift cluster IaC (Infrastructure as Code). "
+                    "It creates IAM role for the Redshift, creates security "
+                    "group and sets up ingress parameters."
+                    " Finally spin-up a redshift cluster."
+    )
+    parser.action_groups.pop()
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+    required.add_argument("-c", "--create", type=boolean_parser, metavar=''
+                          , required=True, help="True or False. Create IAM "
+                                                "roles, security group and "
+                                                "redshift cluster if ie does "
+                                                "not exist."
+                          )
+    required.add_argument("-d", "--delete", type=boolean_parser, metavar=''
+                          , required=True, help="True or False. Delete the "
+                                                "roles, securitygroup and "
+                                                "cluster. WARNING: Deletes "
+                                                "the Redshift cluster, IAM "
+                                                "role and security group. "
+                          )
+    optional.add_argument("-v", "--verbosity", type=boolean_parser, metavar=''
+                          , required=False, default=True, help="Increase "
+                                                               "output "
+                                                               "verbosity. "
+                                                               "Default set "
+                                                               "to DEBUG."
+                          )
+    args = parser.parse_args()
+    logger.info(f"ARGS : {args}")
+
+    if not args.verbosity:
+        logger.setLevel(logging.INFO)
+        logger.info("LOGGING LEVEL SET TO INFO.")
+
+    # print(boto3._get_default_session().get_available_services() ) #
+    # Getting aws services list Creating low-level service clients
+
+    ec2 = boto3.client(service_name='ec2', region_name='us-east-1',
+                       aws_access_key_id=config.get('AWS', 'Key'),
+                       aws_secret_access_key=config.get('AWS', 'SECRET'))
+
+    s3 = boto3.client(service_name='s3', region_name='us-east-1',
+                      aws_access_key_id=config.get('AWS', 'Key'),
+                      aws_secret_access_key=config.get('AWS', 'SECRET'))
+
+    iam = boto3.client(service_name='iam', region_name='us-east-1',
+                       aws_access_key_id=config.get('AWS', 'Key'),
+                       aws_secret_access_key=config.get('AWS', 'SECRET'))
+
+    redshift = boto3.client(service_name='redshift', region_name='us-east-1',
+                            aws_access_key_id=config.get('AWS', 'Key'),
+                            aws_secret_access_key=config.get('AWS', 'SECRET'))
+
+    logger.info("Clients setup for all services.")
+
+    # Setting up IAM Role, security group and cluster
+    if args.create:
+        if create_IAM_role(iam):
+            logger.info("IAM role created. Creating security group....")
+            if create_ec2_security_group(ec2):
+                logger.info(
+                    "Security group created. Spinning redshift cluster....")
+                role_arn = \
+                    iam.get_role(RoleName=config.get('IAM_ROLE', 'NAME'))[
+                        'Role'][
+                        'Arn']
+                vpc_security_group_id = \
+                    get_group(ec2, config.get('SECURITY_GROUP', 'NAME'))[
+                        'GroupId']
+                create_cluster(redshift, role_arn, [vpc_security_group_id])
+            else:
+                logger.error("Failed to create security group")
+        else:
+            logger.error("Failed to create IAM role")
+    else:
+        logger.info("Skipping Creation.")
+
+    # cleanup
+    if args.delete:
+        delete_cluster(redshift)
+        delete_ec2_security_group(ec2)
+        delete_IAM_role(iam)
