@@ -302,4 +302,34 @@ def create_ec2_security_group(ec2_client):
     return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
+def delete_ec2_security_group(ec2_client):
+    """
+    Delete a security group
+    :param ec2_client: ec2 client instance
+    :return: True if security group deleted successfully
+    """
+
+    group_name = config.get('SECURITY_GROUP','NAME')
+    group = get_group(ec2_client, group_name)
+
+    if group is None:
+        logger.info(f"Group {group_name} does not exist")
+        return True
+
+    try:
+        response = ec2_client.delete_security_group(
+            GroupId=group['GroupId'],
+            GroupName=group_name,
+            DryRun=False
+        )
+        logger.debug(f"Deleting security group response : {response}")
+        logger.info(
+            f"Delete response {response['ResponseMetadata']['HTTPStatusCode']}"
+        )
+    except Exception as e:
+        logger.error(f"Error occured while deleting group : {e}")
+        return False
+
+    return response['ResponseMetadata']['HTTPStatusCode'] == 200
+
 
