@@ -228,7 +228,7 @@ def delete_cluster(redshift_client):
         return True
 
     try:
-        while(
+        while (
                 not get_cluster_status(
                     redshift_client, cluster_identifier=cluster_identifier
                 )
@@ -256,55 +256,9 @@ def delete_cluster(redshift_client):
     return response['ResponseMetadata']['HTTPStatusCode']
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def get_group(ec2_client, group_name):
+    groups = \
+        ec2_client.describe_security_groups(
+            Filters=[{'Name': 'group-name', 'Values': [group_name]}]
+        )['SecurityGroups']
+    return None if (len(groups) == 0) else groups[0]
