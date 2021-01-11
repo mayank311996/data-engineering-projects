@@ -262,3 +262,44 @@ def get_group(ec2_client, group_name):
             Filters=[{'Name': 'group-name', 'Values': [group_name]}]
         )['SecurityGroups']
     return None if (len(groups) == 0) else groups[0]
+
+
+def create_ec2_security_group(ec2_client):
+    if (get_group(ec2_client,
+                  config.get('SECURITY_GROUP', 'NAME')) is not None):
+        logger.info("Group already exists!!")
+        return True
+
+    # Fetch VPC ID
+    vpc_id = ec2_client.describe_security_groups()['SecurityGroups'][0][
+        'VpcId']
+
+    response = ec2_client.create_security_group(
+        Description=config.get('SECURITY_GROUP', 'DESCRIPTION'),
+        GroupName=config.get('SECURITY_GROUP', 'NAME'),
+        VpcId=vpc_id,
+        DryRun=False
+        # Checks whether you have the required permissions for the action,
+        # without actually making the request, and provides an error response
+    )
+    logger.debug(f"Security group creation response : {response}")
+    logger.info(
+        f"Group created!! Response code "
+        f": {response['ResponseMetadata']['HTTPStatusCode']}"
+    )
+
+    logger.info("Authorizing security group ingress")
+    ec2_client.authorize_security_group_ingress(
+        GroupId=response['GroupId'],
+        GroupName=config.get('SECURITY_GROUP', 'NAME'),
+        FromPort=int(config.get('INBOUND_RULE', 'PORT_RANGE')),
+        ToPort=int(config.get('INBOUND_RULE', 'PORT_RANGE')),
+        CidrIp=config.get('INBOUND_RULE', 'CIDRIP'),
+        IpProtocol=config.get('INBOUND_RULE', 'PROTOCOL'),
+        DryRun=False
+    )
+
+    return response['ResponseMetadata']['HTTPStatusCode'] == 200
+
+
+
