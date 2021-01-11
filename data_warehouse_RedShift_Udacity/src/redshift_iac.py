@@ -143,7 +143,63 @@ def delete_IAM_role(iam_client):
                                ['HTTPStatusCode'] == 200)) else False
 
 
+def create_cluster(redshift_client, iam_role_arn, vpc_security_group_id):
+    """
+    Create a Redshift cluster using the IAM role and security group created.
+    :param redshift_client: a redshift client instance
+    :param iam_role_arn: IAM role arn to give permission to cluster to
+    communicate with other AWS service
+    :param vpc_security_group_id: vpc group for network setting for cluster
+    :return: True if cluster created successfully.
+    """
 
+    # Cluster Hardware config
+    cluster_type = config.get('DWH', 'DWH_CLUSTER_TYPE')
+    node_type = config.get('DWH', 'DWH_NODE_TYPE')
+    num_nodes = int(config.get('DWH', 'DWH_NUM_NODES'))
+
+    # Cluster identifiers and credentials
+    cluster_identifier = config.get('DWH', 'DWH_CLUSTER_IDENTIFIER')
+    db_name = config.get('DWH', 'DWH_DB')
+    database_port = int(config.get('DWH', 'DWH_PORT'))
+    master_username = config.get('DWH', 'DWH_DB_USER')
+    master_user_password = config.get('DWH', 'DWH_DB_PASSWORD')
+
+    # Cluster adding IAM role
+    iam_role = None
+
+    # Security settings
+    security_group = config.get('SECURITY_GROUP', 'NAME')
+
+    # Documentation - https://boto3.amazonaws.com/v1/documentation/api
+    # /latest/reference/services/redshift.html?highlight=create_cluster
+    # #Redshift.Client.create_cluster
+    try:
+        response = redshift_client.create_cluster(
+            DBName=db_name,
+            ClusterIdentifier=cluster_identifier,
+            ClusterType=cluster_type,
+            NodeType=node_type,
+            NumberOfNodes=num_nodes,
+            MasterUsername=master_username,
+            MasterUserPassword=master_user_password,
+            VpcSecurityGroupIds=vpc_security_group_id,
+            IamRoles=[iam_role_arn]
+        )
+        logger.debug(
+            f"Cluster creation response : {response}"
+        )
+        logger.info(
+            f"Cluster creation response code "
+            f": {response['ResponseMetadata']['HTTPStatusCode']} "
+        )
+    except Exception as e:
+        logger.error(
+            f"Exception occured while creating cluster : {e}"
+        )
+        return False
+
+    return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
 
