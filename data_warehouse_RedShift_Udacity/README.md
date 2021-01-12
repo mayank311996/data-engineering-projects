@@ -84,15 +84,19 @@ Fill both `dwh.cfg` and `cluster.cfg` configuration files.
 
 > STEP 2 
 
-Run `redshift_iac.py` to create IAM roles, security groups, and Redshift cluster on AWS.
+Before starting this step please fil details in `dwh.cfg` and `cluster.cfg` files.
+Those files are empty for security purpose. You can get idea of all parameters required 
+by reading `redshift_iac.py` file. 
+
+Run (locally) `redshift_iac.py` to create IAM roles, security groups, and Redshift cluster on AWS.
 
 > STEP 3
 
-Run `create_tables.py` to create tables (staging and star schema).
+Run (locally) `create_tables.py` to create tables (staging and star schema).
 
 > STEP 4 
 
-Run `etl.py` to shift data from S3 to staging tables and then from staging tables to 
+Run (locally) `etl.py` to shift data from S3 to staging tables and then from staging tables to 
 star schema. 
 
 ## Directory Tree 
