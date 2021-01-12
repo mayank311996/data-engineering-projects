@@ -86,7 +86,8 @@ Fill both `dwh.cfg` and `cluster.cfg` configuration files.
 
 Before starting this step please fil details in `dwh.cfg` and `cluster.cfg` files.
 Those files are empty for security purpose. You can get idea of all parameters required 
-by reading `redshift_iac.py` file. 
+by reading `redshift_iac.py` file. Without this details `redshift_iac.py` file will result into 
+error.
 
 Run (locally) `redshift_iac.py` to create IAM roles, security groups, and Redshift cluster on AWS.
 
