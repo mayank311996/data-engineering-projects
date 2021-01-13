@@ -12,6 +12,7 @@
   * [Bug / Feature Request](#bug---feature-request)
   * [Technologies Used](#technologies-used)
   * [License](#license)
+  * [Resources](#resources)
   
 ## Overview
 
@@ -75,3 +76,8 @@ If you'd like to request a new function, feel free to do so by opening an issue 
 [<img target="_blank" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Cassandra_logo.svg/1280px-Cassandra_logo.svg.png" width=150>](https://cassandra.apache.org/) 
 
 ## License 
+
+## Resources 
+
+- https://shermandigital.com/blog/designing-a-cassandra-data-model/
+- https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/whereClustering.html
