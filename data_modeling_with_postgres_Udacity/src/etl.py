@@ -26,13 +26,13 @@ def process_song_file(cur, file_path):
     )
 
     for val in df.values:
-        num_songs, artist_id, artist_latitude, artist_longitude, \
-        artist_location, artist_name, song_id, title, duration, year = val
+        num_songs, artist_id, artist_lat, artist_long, \
+        artist_loc, artist_name, song_id, title, duration, year = val
 
         # insert artist record
         artist_data = (
-            artist_id, artist_name, artist_location, artist_latitude,
-            artist_longitude
+            artist_id, artist_name, artist_loc, artist_lat,
+            artist_long
         )
         cur.execute(artist_table_insert, artist_data)
 
@@ -66,15 +66,15 @@ def process_log_file(cur, file_path):
     column_labels = [
         "timestamp", "hour", "day", "weekofyear", "month", "year", "weekday"
     ]
-    for data in t:
+    for val in t:
         time_data.append([
-            data,
-            data.hour,
-            data.day,
-            data.weekofyear,
-            data.month,
-            data.year,
-            data.day_name()
+            val,
+            val.hour,
+            val.day,
+            val.weekofyear,
+            val.month,
+            val.year,
+            val.day_name()
         ])
 
     time_df = pd.DataFrame.from_records(data=time_data, columns=column_labels)
