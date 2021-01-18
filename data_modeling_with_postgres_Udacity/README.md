@@ -125,5 +125,18 @@ If you'd like to request a new function, feel free to do so by opening an issue 
 [<img target="_blank" src="https://zdnet2.cbsistatic.com/hub/i/r/2018/04/19/092cbf81-acac-4f3a-91a1-5a26abc1721f/thumbnail/770x578/5d78c50199e6a9242367b37892be8057/postgresql-logo.png" width=150>](https://www.postgresql.org/
 ) 
 
-
 ## License 
+
+## Resources 
+
+- https://www.postgresqltutorial.com/postgresql-not-null-constraint/
+- https://www.postgresqltutorial.com/postgresql-insert/
+- https://www.postgresql.org/docs/9.5/sql-insert.html
+- https://guides.github.com/features/mastering-markdown/
+- https://www.python.org/dev/peps/pep-0008/
+- https://www.markdownguide.org/basic-syntax/
+- https://datatofish.com/convert-pandas-dataframe-to-list/
+- https://www.postgresqltutorial.com/postgresql-upsert/
+- https://www.geeksforgeeks.org/python-docstrings/
+- https://learnsql.com/blog/understanding-numerical-data-types-sql/
+- https://chartio.com/resources/tutorials/how-to-define-an-auto-increment-primary-key-in-postgresql/
