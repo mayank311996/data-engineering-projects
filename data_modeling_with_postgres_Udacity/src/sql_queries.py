@@ -13,11 +13,11 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays(
         songplay_id SERIAL PRIMARY KEY,
-        start_time TIMESTAMP REFERENCES time (start_time),
-        user_id INT REFERENCES users (user_id),
+        start_time TIMESTAMP NOT NULL REFERENCES time (start_time),
+        user_id INT NOT NULL REFERENCES users (user_id),
         level VARCHAR,
-        song_id VARCHAR REFERENCES songs (song_id),
-        artist_id VARCHAR REFERENCES artists (artist_id),
+        song_id VARCHAR NOT NULL REFERENCES songs (song_id),
+        artist_id VARCHAR NOT NULL REFERENCES artists (artist_id),
         session_id INT,
         location VARCHAR,
         user_agent TEXT
@@ -49,8 +49,8 @@ artist_table_create = ("""
         artist_id VARCHAR PRIMARY KEY,
         name VARCHAR,
         location VARCHAR,
-        latitude DECIMAL(9,6),
-        longitude DECIMAL(9,6)
+        latitude DECIMAL(7,5),
+        longitude DECIMAL(8,5)
     )
 """)
 
@@ -78,7 +78,8 @@ songplay_table_insert = ("""
 user_table_insert = ("""
     INSERT INTO users (user_id, first_name, last_name, gender, level) 
     VALUES (%s, %s, %s, %s, %s)
-     ON CONFLICT (user_id) DO NOTHING 
+    ON CONFLICT (user_id) DO UPDATE SET 
+    level = EXCLUDED.level 
 """)  # We added On Conflict do nothing as without this it will give error for
 # duplicate values
 
