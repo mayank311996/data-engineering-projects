@@ -16,8 +16,8 @@ songplay_table_create = ("""
         start_time TIMESTAMP NOT NULL REFERENCES time (start_time),
         user_id INT NOT NULL REFERENCES users (user_id),
         level VARCHAR,
-        song_id VARCHAR NOT NULL REFERENCES songs (song_id),
-        artist_id VARCHAR NOT NULL REFERENCES artists (artist_id),
+        song_id VARCHAR REFERENCES songs (song_id),
+        artist_id VARCHAR REFERENCES artists (artist_id),
         session_id INT,
         location VARCHAR,
         user_agent TEXT
@@ -86,6 +86,7 @@ user_table_insert = ("""
 song_table_insert = ("""
     INSERT INTO songs (song_id, title, artist_id, year, duration)
     VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT (song_id) DO NOTHING 
 """)
 
 artist_table_insert = ("""
